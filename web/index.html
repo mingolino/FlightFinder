@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mingTravel</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Datera’s JavaScript and Stylesheet -->
+    <script src="datera.min.js"></script>
+    <link rel="stylesheet" href="datera.min.css" />
+
+    <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript">
+      eel.expose(addItinerary);
+      function addItinerary(html){
+        const results = document.getElementById('results');
+        results.innerHTML = results.innerHTML + html;
+      }
+
+      function addItineraryOUTDATED(itinerary, totalDuration){
+        /*itinerary = [totalprice, [flight1], [flight2]...]*/
+        /*[date, fromCity, toCity, fromAirport, toAirport, timeStart, timeEnd, airline, price, duration, stopovers]*/
+        const results = document.getElementById('results');
+        let flights = ''
+        for (let i=1;i<itinerary.length;i++){
+          flights = flights + `
+          <div class="flight">
+                <div class="fromAirport">
+                    <p>`+ itinerary[i][3] +`</p>
+                    <h3>`+ itinerary[i][5] +`</h3>
+                </div>
+                <svg class="plane-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 510">
+                    <path fill="#0" d="M497.25 357v-51l-204-127.5V38.25C293.25 17.85 275.4 0 255 0s-38.25 17.85-38.25 38.25V178.5L12.75 306v51l204-63.75V433.5l-51 38.25V510L255 484.5l89.25 25.5v-38.25l-51-38.25V293.25l204 63.75z"/>
+                </svg>
+                <div class="toAirport">
+                    <p>`+ itinerary[i][4] +`</p>
+                    <h3>`+ itinerary[i][6] +`</h3>
+                </div>
+                
+                <div class="separator"></div>
+
+                <div class="info">
+                    <h3>`+ itinerary[i][8] + ' €' +`</h3>
+                    <h3>`+ itinerary[i][10] +`</h3>
+                    <h3>`+ itinerary[i][9] +`</h3>
+                    <h3>`+ itinerary[i][0] +`</h3>
+                    <h3>`+ itinerary[i][7] +`</h3>
+                </div>
+            </div>`
+        }
+        results.innerHTML = results.innerHTML + `
+        <div class="itinerary">
+        <div class="flights">
+            `+ flights +`
+        </div>
+        <div class="sep"></div>
+        <div class="summary">
+            <h2>`+ itinerary[0] + ' €' +`</h2>
+            <h2>`+ totalDuration +`</h2>
+        </div>
+    </div>
+        `;
+      }
+
+      function convertToEuropeanDate(usDate) {
+        const [month, day, year] = usDate.split("-"); // Diviser la chaîne
+        return `${day}/${(parseInt(month) + 1).toString()}/${year}`;
+      }
+      function toLoadingButton() {
+        const searchButton = document.getElementById("searchButton");
+
+        searchButton.className = "loading";
+        // Remplacer le contenu HTML du bouton par celui du bouton "Loading..."
+        searchButton.innerHTML = `
+          <svg aria-hidden="true" role="status" class="inline w-4 h-4 mr-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"></path>
+          </svg>
+          Loading...
+        `;
+
+        searchButton.disabled = true;
+      }
+      
+      eel.expose(revertToSearchButton);
+      function revertToSearchButton() {
+        // Récupère le conteneur parent du bouton
+        const searchButton = document.getElementById("searchButton");
+        
+        searchButton.className = "CartBtn"
+
+        // Remplace le bouton "Loading" par le bouton "Search"
+        searchButton.innerHTML = `
+          <span class="IconContainer">
+                <svg viewBox="0 0 13 13" width="18px">
+                  <path
+                    fill="white"
+                    d="M1.55989957,5.41666667 L5.51582215,5.41666667 L4.47015462,0.108333333 L4.47015462,0.108333333 C4.47015462,0.0634601974 4.49708054,0.0249592654 4.5354546,0.00851337035 L4.57707145,0 L5.36229752,0 C5.43359776,0 5.50087375,0.028779451 5.55026392,0.0782711996 L5.59317877,0.134368264 L7.13659662,2.81558333 L8.29565964,2.81666667 C8.53185377,2.81666667 8.72332694,3.01067661 8.72332694,3.25 C8.72332694,3.48932339 8.53185377,3.68333333 8.29565964,3.68333333 L7.63589819,3.68225 L8.63450135,5.41666667 L11.9308317,5.41666667 C12.5213171,5.41666667 13,5.90169152 13,6.5 C13,7.09830848 12.5213171,7.58333333 11.9308317,7.58333333 L8.63450135,7.58333333 L7.63589819,9.31666667 L8.29565964,9.31666667 C8.53185377,9.31666667 8.72332694,9.51067661 8.72332694,9.75 C8.72332694,9.98932339 8.53185377,10.1833333 8.29565964,10.1833333 L7.13659662,10.1833333 L5.59317877,12.8656317 C5.55725264,12.9280353 5.49882018,12.9724157 5.43174295,12.9907056 L5.36229752,13 L4.57707145,13 L4.55610333,12.9978962 C4.51267695,12.9890959 4.48069792,12.9547924 4.47230803,12.9134397 L4.47223088,12.8704208 L5.51582215,7.58333333 L1.55989957,7.58333333 L0.891288881,8.55114605 C0.853775374,8.60544678 0.798421006,8.64327676 0.73629202,8.65879796 L0.672314689,8.66666667 L0.106844414,8.66666667 L0.0715243949,8.66058466 L0.0715243949,8.66058466 C0.0297243066,8.6457608 0.00275502199,8.60729104 0,8.5651586 L0.00593007386,8.52254537 L0.580855011,6.85813984 C0.64492547,6.67265611 0.6577034,6.47392717 0.619193545,6.28316421 L0.580694768,6.14191703 L0.00601851064,4.48064746 C0.00203480725,4.4691314 0,4.45701613 0,4.44481314 C0,4.39994001 0.0269259152,4.36143908 0.0652999725,4.34499318 L0.106916826,4.33647981 L0.672546853,4.33647981 C0.737865848,4.33647981 0.80011301,4.36066329 0.848265401,4.40322477 L0.89131128,4.45169723 L1.55989957,5.41666667 Z"
+                  ></path>
+                </svg>
+              </span>
+              <p class="text">Search Flight</p>
+        `;
+
+        searchButton.disabled = false;
+    }
+
+        async function searchFlight() {
+        const fromAirport = document.getElementById("from_airport").value;
+        const toAirport = document.getElementById("to_airport").value;
+        const dateRangeInput = document.getElementById("date_range").value;
+        const directFlight = document.getElementById("direct_flight").checked;
+        const stopovers = document.getElementById("stopovers").value;
+        const maxPrice = document.getElementById("max_price").value;
+
+        console.log(dateRangeInput);
+
+        // Vérifier si l'input contient bien une plage de dates
+        if (!dateRangeInput || !dateRangeInput.includes(" - ")) {
+            alert("Veuillez sélectionner une plage de dates valide.");
+            return;
+        }
+
+        // Vérifier si le prix maximum est inférieur à 1
+        if (maxPrice && parseInt(maxPrice) < 1){
+          alert("Impossible d'avoir un prix maximum négatif.")
+          return;
+        }
+
+        // Extraire les deux dates
+        const [departureDate, returnDate] = dateRangeInput.split(" - ");
+
+        console.log(departureDate);
+        console.log(returnDate);
+
+        // Validation des dates
+        const departure = new Date(departureDate.split("-").reverse().join("-")); // Convertir au format YYYY-MM-DD
+        const returnD = new Date(returnDate.split("-").reverse().join("-")); // Convertir au format YYYY-MM-DD
+        const differenceInDays = (returnD - departure) / (1000 * 60 * 60 * 24);
+
+        /* if (differenceInDays > 30) {
+            alert("La plage de dates ne peut pas dépasser 30 jours.");
+            return;
+        } */
+
+        toLoadingButton();
+
+        // Appeler la fonction Python
+        await eel.searchfromgui(
+            fromAirport,
+            toAirport,
+            convertToEuropeanDate(departureDate),
+            convertToEuropeanDate(returnDate),
+            directFlight,
+            stopovers,
+            maxPrice
+        );
+    }
+    async function testAddItinerary(itinerary) {
+        await eel.addItinerary(itinerary);
+    }
+    async function nextFlight() {
+        await eel.getnextday();
+    }
+    async function getTransferDetails() {
+      await eel.getTransferDetails();
+    }
+
+    // Initialisation de Datera pour la sélection de plages de dates
+    document.addEventListener("DOMContentLoaded", function () {
+            new window.Datera("date_range", {
+                selectionType: "range", // Activer la sélection de plage
+                theme: "theme3-dark", // Thème sombre
+                // theme[1-5]-dark, theme[1-5]-light, 
+                minDate: new Date(), // La date minimum est aujourd'hui
+                maxDate: new Date(new Date().setDate(new Date().getDate() + 300)), // Maximum 300j à partir de maintenant
+                minYear: new Date().getFullYear(),
+                maxYear: new Date().getFullYear() + 1,
+                maxRangeDays: 30, // Intervalle maximum de 30 jours
+                startWeek: 1,
+                onChange: (range) => {
+                    if (range && range.length === 2) {
+                        const [startDate, endDate] = range;
+                        const days = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24);
+                        if (days > 30) {
+                            alert("La plage ne peut pas dépasser 30 jours.");
+                        }
+                    }
+                },
+            }).mount();
+        });
+    </script>
+  </head>
+
+  <body>
+    <div class="bg"></div>
+
+    <div class="container">
+        <form class="form-container" onsubmit="event.preventDefault(); searchFlight();"> 
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="direct_flight">
+            <label for="direct_flight">Vols directs uniquement</label>
+          </div>
+          
+          <div class="airportsInput">
+            <!--<label for="from_airport">Aéroport de départ :</label>-->
+            <input type="text" id="from_airport" placeholder="D'où partons nous?" required>
+            <!-- <label for="to_airport">Aéroport d'arrivée :</label> -->
+             <button class="exchange">
+              <img src="/exchange.png">
+             </button>
+            <input type="text" id="to_airport" placeholder="Où allons-nous?" required>
+          </div>
+    
+          
+  
+
+            
+            <div class="form-group">
+              <!-- <label for="date_range">Plage de dates :</label> -->
+              <input id="date_range" class="datera" type="text" placeholder="Quand partons-nous?">
+            </div>
+    
+            
+    
+            <div class="form-group">
+              <!-- <label for="stopovers">Escales à rechercher :</label> -->
+              <input type="text" id="stopovers" placeholder="Escales à rechercher">
+            </div>
+
+            <div class="form-group">
+              <!-- <label for="max_price">Prix maximum :</label> -->
+              <input type="number" id="max_price" min="5" max="10000" placeholder="Prix maximum">
+            </div>
+    
+            <!--<button type="submit" class="search-button">Rechercher</button>-->
+            <button type="submit" class="CartBtn" id="searchButton">
+              <span class="IconContainer">
+                <svg viewBox="0 0 13 13" width="18px">
+                  <path
+                    fill="white"
+                    d="M1.55989957,5.41666667 L5.51582215,5.41666667 L4.47015462,0.108333333 L4.47015462,0.108333333 C4.47015462,0.0634601974 4.49708054,0.0249592654 4.5354546,0.00851337035 L4.57707145,0 L5.36229752,0 C5.43359776,0 5.50087375,0.028779451 5.55026392,0.0782711996 L5.59317877,0.134368264 L7.13659662,2.81558333 L8.29565964,2.81666667 C8.53185377,2.81666667 8.72332694,3.01067661 8.72332694,3.25 C8.72332694,3.48932339 8.53185377,3.68333333 8.29565964,3.68333333 L7.63589819,3.68225 L8.63450135,5.41666667 L11.9308317,5.41666667 C12.5213171,5.41666667 13,5.90169152 13,6.5 C13,7.09830848 12.5213171,7.58333333 11.9308317,7.58333333 L8.63450135,7.58333333 L7.63589819,9.31666667 L8.29565964,9.31666667 C8.53185377,9.31666667 8.72332694,9.51067661 8.72332694,9.75 C8.72332694,9.98932339 8.53185377,10.1833333 8.29565964,10.1833333 L7.13659662,10.1833333 L5.59317877,12.8656317 C5.55725264,12.9280353 5.49882018,12.9724157 5.43174295,12.9907056 L5.36229752,13 L4.57707145,13 L4.55610333,12.9978962 C4.51267695,12.9890959 4.48069792,12.9547924 4.47230803,12.9134397 L4.47223088,12.8704208 L5.51582215,7.58333333 L1.55989957,7.58333333 L0.891288881,8.55114605 C0.853775374,8.60544678 0.798421006,8.64327676 0.73629202,8.65879796 L0.672314689,8.66666667 L0.106844414,8.66666667 L0.0715243949,8.66058466 L0.0715243949,8.66058466 C0.0297243066,8.6457608 0.00275502199,8.60729104 0,8.5651586 L0.00593007386,8.52254537 L0.580855011,6.85813984 C0.64492547,6.67265611 0.6577034,6.47392717 0.619193545,6.28316421 L0.580694768,6.14191703 L0.00601851064,4.48064746 C0.00203480725,4.4691314 0,4.45701613 0,4.44481314 C0,4.39994001 0.0269259152,4.36143908 0.0652999725,4.34499318 L0.106916826,4.33647981 L0.672546853,4.33647981 C0.737865848,4.33647981 0.80011301,4.36066329 0.848265401,4.40322477 L0.89131128,4.45169723 L1.55989957,5.41666667 Z"
+                  ></path>
+                </svg>
+              </span>
+              <p class="text">Search Flight</p>
+            </button>
+          </form>
+      </div>
+    </div>
+    <button onclick="event.preventDefault(); nextFlight();">Next Flight</button>
+    <button onclick="event.preventDefault(); getTransferDetails();">Get transfer city</button>
+    <button onclick="event.preventDefault(); toLoadingButton();">To loading button</button>
+    <button onclick="event.preventDefault(); revertToSearchButton();">To search button</button>
+    <button onclick="event.preventDefault(); 
+    testAddItinerary(['120', [`01/01/2024`, `Paris`, `Vienne`, `CDG`, `VIE`, `06:00`, `08:30`, `Ryanair`, 30, `2 h 30`, `Sans escales`],
+    [`01/01/2024`, `Paris`, `Vienne`, `CDG`, `VIE`, `06:00`, `08:30`, `Ryanair`, 30, `2 h 30`, `Sans escales`]], '5 h 00');">Add itinerary</button>
+    <div class="results" id="results"></div>
+  </body>
+</html>
