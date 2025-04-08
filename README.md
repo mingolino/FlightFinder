@@ -29,8 +29,6 @@ FlightFinder will then search for the cheapest combination of flights, including
 
 ## ❓ Why Use FlightFinder Over a Traditional Comparator?
 
-Google Flights aggregates offers from travel agencies and airlines directly.
-
 When booking via traditional methods:
 - Escales (layovers) are arranged by airlines, who ensure your full connection
 - This adds to cost (baggage handling, interline agents, etc.)
@@ -39,6 +37,7 @@ When booking via traditional methods:
 **FlightFinder bypasses this:**
 - It looks for separate tickets, which avoids the airline-imposed fees
 - It can route you through countries not on holiday, avoiding demand-based price hikes
+- It uses Google Flights who aggregates offers from travel agencies and airlines directly.
 
 ### 🔹 Real Example (July 8)
 - Without FlightFinder: Paris ➔ Amman = €400 (Austrian Airlines, 1 layover)
@@ -48,7 +47,7 @@ When booking via traditional methods:
 
 ## 📁 Installation
 
-1. Go to the [Releases](https://github.com/yourusername/FlightFinder/releases) tab and download **FlightFinder.exe**
+1. Go to the [Releases](https://github.com/mingolino/FlightFinder/releases) tab and download **FlightFinder.exe**
 2. Download the latest **ChromeDriver** from [here](https://googlechromelabs.github.io/chrome-for-testing/)
 3. Run `chromedriver.exe`
 4. Run `FlightFinder.exe`
