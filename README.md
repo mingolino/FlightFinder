@@ -13,6 +13,7 @@ While building **FlightFinder**, I learned:
 - How to sort and format large datasets for clean and useful output
 - How to handle and manipulate date ranges for multi-day itineraries
 - How to detect and wait for complete website loading before data extraction
+- How to use html language in a python program
 
 ---
 
