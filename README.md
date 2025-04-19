@@ -67,5 +67,5 @@ Under the following terms:
 - **NonCommercial** — You may not use the material for commercial purposes.
 - **NoDerivatives** — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
-Read the full license text in the [LICENSE](https://github.com/mingolino/FlightFinder/LICENSE) file.
+Read the full license text in the [LICENSE](https://github.com/mingolino/FlightFinder/blob/main/LICENSE) file.
 
